@@ -62,6 +62,40 @@ if st.session_state.get(f"improved_ready_{cycle_key}", False):
             st.success("Congratulations! The difficulty level of your sentence has increased.")
             # Option to start a new sentence
             if st.button('Enter a new sentence', key=f"new_sentence_{cycle_key}"):
-                st.session_state['cycle'] += 1  # Increment the cycle counter
+                # Entrée de la phrase initiale
+                sentence = st.text_input("Sentence", key=f"sentence_{cycle_key}")
+
+                if st.button('Predict', key=f"predict_{cycle_key}"):
+                    prediction = st.session_state.model.predict([sentence])[0]
+                    st.write(f"The predicted difficulty level for this sentence is: {prediction}")
+    
+                    # Affichage des synonymes
+                    words = sentence.split()
+                    for word in words:
+                        synonyms = get_synonyms(word)
+                        if synonyms:
+                            st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
+
+                    # Sauvegarde de la prédiction initiale pour comparaison ultérieure
+                    st.session_state[f"current_prediction_{cycle_key}"] = prediction
+
+                    # Préparation pour entrer une phrase améliorée
+                    st.session_state[f"improved_ready_{cycle_key}"] = True
+
+                # Demande d'amélioration de la phrase si la prédiction a été faite
+                if st.session_state.get(f"improved_ready_{cycle_key}", False):
+                    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key=f"improved_{cycle_key}")
+
+                    if st.button('Submit the improved sentence', key=f"submit_improved_{cycle_key}"):
+                        new_prediction = st.session_state.model.predict([improved_sentence])[0]
+                        st.write(f"The new predicted difficulty level for your improved sentence is: {new_prediction}")
+
+                        if new_prediction > st.session_state[f"current_prediction_{cycle_key}"]:
+                            st.success("Congratulations! The difficulty level of your sentence has increased.")
+                            # Option to start a new sentence
+                            if st.button('Enter a new sentence', key=f"new_sentence_{cycle_key}"):
+                                st.session_state['cycle'] += 1  # Increment the cycle counter
+                        else:
+                            st.error("The difficulty level has not increased. Try again!")
         else:
             st.error("The difficulty level has not increased. Try again!")
