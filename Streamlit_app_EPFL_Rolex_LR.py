@@ -9,22 +9,24 @@ st.title('Predicting sentence difficulty in French')
 # Description
 st.write("Enter a sentence in French to predict its difficulty level and get synonyms to enrich your vocabulary.")
 
-# URL de votre modèle stocké sur GitHub
-#url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
-
 # Chargement du modèle si pas déjà chargé
 if 'model' not in st.session_state:
     url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
     response = requests.get(url)
     st.session_state.model = load(BytesIO(response.content))
 
+# Fonction pour obtenir des synonymes
+def get_synonyms(word):
+    synonyms = {
+        "manger": ["consommer", "dévorer", "ingérer"],
+        "pomme": ["fruit"],
+        "perdu": ["égaré", "disparu", "paumé"]
+    }
+    return synonyms.get(word, [])
+
 # Téléchargement et chargement du modèle
 #response = requests.get(url)
 #model = load(BytesIO(response.content))
-
-# Entrée de l'utilisateur
-sentence = st.text_input("Sentence", "")
-
 
 # Clé API pour Dicolink
 #api_key = 'YOUR_DICOLINK_API_KEY'
@@ -47,15 +49,12 @@ def get_synonyms(word):
     # Retourner une liste vide si le mot n'est pas trouvé
     return synonyms.get(word, [])
 
+# Entrée de l'utilisateur
+sentence = st.text_input("Sentence", "")
+
 if st.button('Predict'):
-    prediction = model.predict([sentence])[0]
+    prediction = st.session_state.model.predict([sentence])[0]
     st.write(f"The predicted difficulty level for this sentence is: {prediction}")
-    
-    # Afficher les synonymes pour chaque mot
-    #words = sentence.split()
-    #for word in words:
-        #synonyms = get_synonyms(word)
-        #st.write(f"Synonymes pour '{word}' : {synonyms}")
     
     words = sentence.split()
     for word in words:
@@ -63,10 +62,16 @@ if st.button('Predict'):
         if synonyms:
             st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
     
+    # Afficher les synonymes pour chaque mot
+    #words = sentence.split()
+    #for word in words:
+        #synonyms = get_synonyms(word)
+        #st.write(f"Synonymes pour '{word}' : {synonyms}")
+    
     # Sauvegarder la prédiction actuelle pour la comparaison ultérieure
     st.session_state.current_prediction = prediction
 
-# Input pour améliorer la phrase
+# Interaction pour améliorer la phrase
 if 'current_prediction' in st.session_state:
     improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key="improved")
 
