@@ -25,29 +25,31 @@ def get_synonyms(word):
     return synonyms.get(word, [])
 
 def reset_form():
-    st.session_state.sentence = ""
-    st.session_state.improved = ""
+    st.session_state.pop('sentence', None)
+    st.session_state.pop('improved', None)
+    st.session_state.pop('current_prediction', None)
 
 # Prédiction de la difficulté et gestion des améliorations de phrase
-sentence = st.text_input("Sentence", value=st.session_state.get('sentence', ''), key='sentence')
+sentence = st.text_input("Sentence", value='', key='sentence')
 
 if st.button('Predict', key='predict'):
-    prediction = st.session_state.model.predict([sentence])[0]
-    st.write(f"The predicted difficulty level for this sentence is: {prediction}")
+    if sentence:
+        prediction = st.session_state.model.predict([sentence])[0]
+        st.write(f"The predicted difficulty level for this sentence is: {prediction}")
+        
+        words = sentence.split()
+        for word in words:
+            synonyms = get_synonyms(word)
+            if synonyms:
+                st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
     
-    words = sentence.split()
-    for word in words:
-        synonyms = get_synonyms(word)
-        if synonyms:
-            st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
-
-    # Sauvegarder la prédiction initiale pour comparaison ultérieure
-    st.session_state.current_prediction = prediction
+        # Sauvegarder la prédiction initiale pour comparaison ultérieure
+        st.session_state.current_prediction = prediction
 
 # Interaction pour améliorer la phrase
 if 'current_prediction' in st.session_state:
     improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", 
-                                      value=st.session_state.get('improved', ''), key='improved')
+                                      value='', key='improved')
 
     if st.button('Submit the improved sentence', key="submit_improved"):
         new_prediction = st.session_state.model.predict([improved_sentence])[0]
@@ -55,9 +57,11 @@ if 'current_prediction' in st.session_state:
         
         if new_prediction > st.session_state.current_prediction:
             st.success("Congratulations! The difficulty level of your sentence has increased.")
-            st.session_state.current_prediction = new_prediction  # Mise à jour de la prédiction actuelle
             if st.button("Enter a new sentence", key="new_sentence"):
                 reset_form()
         else:
             st.error("The difficulty level has not increased. Try again!")
 
+# If the user has pressed the reset button
+if 'new_sentence' in st.session_state:
+    reset_form()
