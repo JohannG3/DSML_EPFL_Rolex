@@ -10,11 +10,17 @@ st.title('Predicting sentence difficulty in French')
 st.write("Enter a sentence in French to predict its difficulty level and get synonyms to enrich your vocabulary.")
 
 # URL de votre modèle stocké sur GitHub
-url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
+#url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
+
+# Chargement du modèle si pas déjà chargé
+if 'model' not in st.session_state:
+    url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
+    response = requests.get(url)
+    st.session_state.model = load(BytesIO(response.content))
 
 # Téléchargement et chargement du modèle
-response = requests.get(url)
-model = load(BytesIO(response.content))
+#response = requests.get(url)
+#model = load(BytesIO(response.content))
 
 # Entrée de l'utilisateur
 sentence = st.text_input("Sentence", "")
