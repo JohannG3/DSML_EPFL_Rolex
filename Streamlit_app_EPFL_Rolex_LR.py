@@ -19,18 +19,17 @@ model = load(BytesIO(response.content))
 # Entrée de l'utilisateur
 sentence = st.text_input("Sentence", "")
 
-"""
-# Clé API pour Dicolink
-api_key = 'YOUR_DICOLINK_API_KEY'
 
-def get_synonyms(word):
+# Clé API pour Dicolink
+#api_key = 'YOUR_DICOLINK_API_KEY'
+
+#def get_synonyms(word):
     # Fonction pour obtenir les synonymes d'un mot en français
-    api_url = f"https://api.dicolink.com/v1/mot/{word}/synonymes?limite=5&api_key={api_key}"
-    response = requests.get(api_url)
-    data = response.json()
-    synonyms = [item['mot'] for item in data] if isinstance(data, list) else "Aucun synonyme trouvé"
-    return ", ".join(synonyms)
-"""
+    #api_url = f"https://api.dicolink.com/v1/mot/{word}/synonymes?limite=5&api_key={api_key}"
+    #response = requests.get(api_url)
+    #data = response.json()
+    #synonyms = [item['mot'] for item in data] if isinstance(data, list) else "Aucun synonyme trouvé"
+    #return ", ".join(synonyms)
 
 def get_synonyms(word):
     # Simuler une fonction de récupération de synonymes
