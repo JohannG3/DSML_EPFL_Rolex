@@ -59,10 +59,10 @@ if st.button('Predict'):
             st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
     
     # Demander à l'utilisateur d'améliorer sa phrase
-    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", "")
+if 'improved' in st.session_state and st.session_state.improved:
     if st.button('Submit the improved sentence'):
-        new_prediction = model.predict([improved_sentence])[0]
+        new_prediction = st.session_state.model.predict([st.session_state.improved])[0]
         if new_prediction > prediction:
-            st.success("Congratulations ! The difficulty level of your sentence has increased.")
+            st.success("Congratulations! The difficulty level of your sentence has increased.")
         else:
-            st.error("The difficulty level has not increased. Try again !")
+            st.error("The difficulty level has not increased. Try again!")
