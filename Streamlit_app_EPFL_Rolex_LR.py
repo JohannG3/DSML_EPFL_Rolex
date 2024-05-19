@@ -61,7 +61,7 @@ if f"current_prediction_{cycle_key}" in st.session_state:
             if st.button('Enter a new sentence', key=f"new_sentence_{cycle_key}"):
                 st.session_state['cycle'] = 0
                 del st.session_state[f"current_prediction_{cycle_key}"]
-                st.session_state[f"sentence_{cycle_key}"] = ""
+                #st.session_state[f"sentence_{cycle_key}"] = ""
                 handle_new_cycle()
         else:
             st.error("The difficulty level has not increased. Try again!")
