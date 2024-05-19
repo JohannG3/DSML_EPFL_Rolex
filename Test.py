@@ -39,7 +39,6 @@ if st.button('Predict'):
 
     # Sauvegarder la prédiction initiale pour comparaison ultérieure
     st.session_state.current_prediction = prediction
-    st.session_state.sentence = sentence
 
 # Interaction pour améliorer la phrase
 if 'current_prediction' in st.session_state:
@@ -51,11 +50,9 @@ if 'current_prediction' in st.session_state:
         
         if new_prediction > st.session_state.current_prediction:
             st.success("Congratulations! The difficulty level of your sentence has increased.")
-            # Réinitialisation de l'état
-            if st.button('Enter a new sentence', key=f"new_sentence_{cycle_key}"):
-                #for key in ['current_prediction', 'sentence', 'improved']:
-                #    if key in st.session_state:
-                 #       del st.session_state[key]
-                st.experimental_rerun()  # Redémarrage de l'application
+            # Button to start over
+            if st.button('Enter a new sentence'):
+                st.session_state.clear()  # Clearing all session state to start fresh
+                st.experimental_rerun()  # Restart the application
         else:
             st.error("The difficulty level has not increased. Try again!")
