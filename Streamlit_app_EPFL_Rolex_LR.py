@@ -17,12 +17,12 @@ if 'model' not in st.session_state:
 
 # Fonction pour obtenir des synonymes
 def get_synonyms(word):
-  synonyms = {
-    "manger": ["consommer", "dévorer", "ingérer"],
-    "pomme": ["fruit"],
-    "perdu": ["égaré", "disparu", "paumé"]
-  }
-  return synonyms.get(word, [])
+    synonyms = {
+        "manger": ["consommer", "dévorer", "ingérer"],
+        "pomme": ["fruit"],
+        "perdu": ["égaré", "disparu", "paumé"]
+    }
+    return synonyms.get(word, [])
 
 def handle_new_cycle():
   st.session_state['cycle'] = st.session_state.get('cycle', 0) + 1
