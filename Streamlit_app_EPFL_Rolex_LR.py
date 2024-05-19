@@ -54,7 +54,7 @@ if st.button('Predict', key=f"predict_{cycle_key}"):
 
 # Demande d'amélioration de la phrase si la prédiction a été faite
 if f"current_prediction_{cycle_key}" in st.session_state:
-    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key=f"improved_{cycle_key}")
+    improved_sentence = st.text_input("Improve your sentence to increase your french vocabulary:", key=f"improved_{cycle_key}")
 
     if st.button('Submit the improved sentence', key=f"submit_improved_{cycle_key}"):
         new_prediction = st.session_state.model.predict([improved_sentence])[0]
