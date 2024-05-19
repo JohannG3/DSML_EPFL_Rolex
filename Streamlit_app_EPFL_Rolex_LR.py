@@ -25,13 +25,20 @@ def get_synonyms(word):
     return synonyms.get(word, [])
 
 # Gestion des cycles d'interaction
+def start_new_cycle():
+    # Réinitialiser les clés pertinentes dans le session state pour un nouveau cycle
+    keys_to_delete = [key for key in st.session_state.keys() if key.startswith('cycle_')]
+    for key in keys_to_delete:
+        del st.session_state[key]
+    st.session_state['cycle'] = st.session_state.get('cycle', 0) + 1
+
 if 'cycle' not in st.session_state:
     st.session_state['cycle'] = 0
 
 cycle_key = f"cycle_{st.session_state['cycle']}"
 
 # Entrée de la phrase initiale
-sentence = st.text_input("Sentence", key=f"sentence_{cycle_key}", on_change=lambda: handle_new_cycle())
+sentence = st.text_input("Sentence", key=f"sentence_{cycle_key}")
 
 if st.button('Predict', key=f"predict_{cycle_key}"):
     prediction = st.session_state.model.predict([sentence])[0]
@@ -46,10 +53,9 @@ if st.button('Predict', key=f"predict_{cycle_key}"):
 
     # Sauvegarde de la prédiction initiale pour comparaison ultérieure
     st.session_state[f"current_prediction_{cycle_key}"] = prediction
-    st.session_state[f"improved_ready_{cycle_key}"] = True
 
 # Demande d'amélioration de la phrase si la prédiction a été faite
-if st.session_state.get(f"improved_ready_{cycle_key}", False):
+if f"current_prediction_{cycle_key}" in st.session_state:
     improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key=f"improved_{cycle_key}")
 
     if st.button('Submit the improved sentence', key=f"submit_improved_{cycle_key}"):
@@ -58,17 +64,7 @@ if st.session_state.get(f"improved_ready_{cycle_key}", False):
 
         if new_prediction > st.session_state[f"current_prediction_{cycle_key}"]:
             st.success("Congratulations! The difficulty level of your sentence has increased.")
+            if st.button('Enter a new sentence', key=f"new_sentence_{cycle_key}"):
+                start_new_cycle()  # Reset everything for a new cycle
         else:
             st.error("The difficulty level has not increased. Try again!")
-
-        if st.button('Enter a new sentence', key=f"new_sentence_{cycle_key}"):
-            handle_new_cycle()
-
-def handle_new_cycle():
-    # Increment the cycle counter to start a new cycle
-    st.session_state['cycle'] += 1  
-    # Reset any state variable that is specific to a cycle
-    keys_to_reset = ['improved_ready', 'current_prediction']
-    for key in keys_to_reset:
-        if f"{key}_{cycle_key}" in st.session_state:
-            del st.session_state[f"{key}_{cycle_key}"]
