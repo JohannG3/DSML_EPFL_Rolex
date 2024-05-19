@@ -11,9 +11,9 @@ st.write("Enter a sentence in French to predict its difficulty level and get syn
 
 # Chargement du modèle si pas déjà chargé
 if 'model' not in st.session_state:
-  url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
-  response = requests.get(url)
-  st.session_state.model = load(BytesIO(response.content))
+    url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
+    response = requests.get(url)
+    st.session_state.model = load(BytesIO(response.content))
 
 # Fonction pour obtenir des synonymes
 def get_synonyms(word):
