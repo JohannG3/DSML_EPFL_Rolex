@@ -32,19 +32,32 @@ sentence = st.text_input("Sentence", "")
     #return ", ".join(synonyms)
 
 def get_synonyms(word):
-    # Simuler une fonction de récupération de synonymes
-    synonyms = {"manger": ["consommer", "dévorer", "ingérer"], "pomme": ["fruit"]}
-    return synonyms.get(word, [])
+    # EXEMPLE
+    synonyms = {
+        "manger": ["consommer", "dévorer", "ingérer"],
+        "pomme": ["fruit"],
+        "perdu": ["égaré", "disparu", "paumé"]
+    }
+    return synonyms.get(word, "Aucun synonyme trouvé")
 
 if st.button('Predict'):
     prediction = model.predict([sentence])[0]
     st.write(f"The predicted difficulty level for this sentence is: {prediction}")
     
     # Afficher les synonymes pour chaque mot
+    #words = sentence.split()
+    #for word in words:
+        #synonyms = get_synonyms(word)
+        #st.write(f"Synonymes pour '{word}' : {synonyms}")
+
+    # EXEMPLE
     words = sentence.split()
     for word in words:
         synonyms = get_synonyms(word)
-        st.write(f"Synonymes pour '{word}' : {synonyms}")
+        if synonyms != "Aucun synonyme trouvé":
+            st.write(f"Synonymes pour '{word}' : {', '.join(synonyms)}")
+        else:
+            st.write(f"Aucun synonyme trouvé pour '{word}'.")
     
     # Demander à l'utilisateur d'améliorer sa phrase
     improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", "")
