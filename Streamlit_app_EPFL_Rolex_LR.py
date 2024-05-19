@@ -55,10 +55,8 @@ if st.button('Predict'):
     words = sentence.split()
     for word in words:
         synonyms = get_synonyms(word)
-        if synonyms:
+        if synonyms:  # Afficher uniquement si la liste des synonymes n'est pas vide
             st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
-        else:
-            st.write(f"No synonyms found for '{word}'.")
     
     # Demander à l'utilisateur d'améliorer sa phrase
     improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", "")
