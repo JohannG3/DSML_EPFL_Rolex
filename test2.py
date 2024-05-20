@@ -6,11 +6,11 @@ from io import BytesIO
 st.markdown("""
     <style>
     h1 {
-        color: red;
+        color: pink;
         font-size: 48px;
     }
     h2 {
-        color: green;
+        color: blue;
         font-size: 36px;
     }
     .reportview-container .markdown-text-container {
