@@ -119,6 +119,7 @@ sentence = st.text_input("Enter a French sentence")
 
 if st.button('Process'):
     # Traduction en anglais
+    """
     english_translation = translate_to_english(sentence)
     st.write(f"English translation: {english_translation}")
     
@@ -145,3 +146,6 @@ if st.button('Process'):
     st.write("French translations of English synonyms:")
     for word, synonyms in synonyms_in_french.items():
         st.write(f"{word}: {', '.join(synonyms)}")
+    """
+    english_translation = translate_to_french(sentence)
+    st.write(f"English translation: {english_translation}")
