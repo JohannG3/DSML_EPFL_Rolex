@@ -52,7 +52,7 @@ if st.button('Predict and Enhance'):
     prediction = st.session_state.model.predict([sentence])[0]
     st.write(f"The predicted difficulty level for this sentence in French is: {prediction}")
     """
-
+"""
 import streamlit as st
 import requests
 from joblib import load
@@ -132,4 +132,53 @@ if st.button('Predict and Enhance'):
     # Effectuer la prédiction de difficulté en français
     prediction = st.session_state.model.predict([sentence])[0]
     st.write(f"The predicted difficulty level for this sentence in French is: {prediction}")
+"""
+import streamlit as st
+import requests
+from joblib import load
+from io import BytesIO
 
+st.title('Predicting sentence difficulty in French with Synonym Enhancement')
+st.write("Enter a sentence in French to predict its difficulty level, get synonyms in English, and translate them back to French.")
+
+if 'model' not in st.session_state:
+    url = 'https://github.com/JohannG3/DSML_EPFL_Rolex/blob/main/french_difficulty_predictor_model.joblib?raw=true'
+    response = requests.get(url)
+    st.session_state.model = load(BytesIO(response.content))
+
+def translate_text(text, target_language="fr"):
+    url = "https://opentranslator.p.rapidapi.com/translate"
+    payload = {"text": text, "target": target_language}
+    headers = {
+        "content-type": "application/json",
+        "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
+        "X-RapidAPI-Host": "opentranslator.p.rapidapi.com"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    if response.status_code == 200 and 'translatedText' in response.json():
+        return response.json()['translatedText']
+    else:
+        return "Translation error"
+
+def get_synonyms(word):
+    url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
+    headers = {
+        'x-rapidapi-host': "wordsapiv1.p.rapidapi.com",
+        'x-rapidapi-key': "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200 and 'synonyms' in response.json():
+        return response.json()['synonyms']
+    return []
+
+sentence = st.text_input("Sentence in French", "")
+if st.button('Predict and Enhance'):
+    synonyms = {word: get_synonyms(word) for word in sentence.split()}
+    synonyms_in_french = {word: [translate_text(syn, "fr") for syn in syn_list] for word, syn_list in synonyms.items()}
+
+    st.write("English synonyms and their French translations:")
+    for word, syns in synonyms_in_french.items():
+        st.write(f"{word} (EN) -> {', '.join(syns)} (FR)")
+
+    prediction = st.session_state.model.predict([sentence])[0]
+    st.write(f"The predicted difficulty level for this sentence in French is: {prediction}")
