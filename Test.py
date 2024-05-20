@@ -24,8 +24,14 @@ def get_synonyms(word):
     }
     return synonyms.get(word, [])
 
+# Gérer l'état des entrées
+if 'sentence' not in st.session_state:
+    st.session_state.sentence = ""
+if 'improved' not in st.session_state:
+    st.session_state.improved = ""
+
 # Prédiction de la difficulté et gestion des améliorations de phrase
-sentence = st.text_input("Sentence", "")
+sentence = st.text_input("Sentence", value=st.session_state.sentence, key="sentence")
 
 if st.button('Predict'):
     prediction = st.session_state.model.predict([sentence])[0]
@@ -42,7 +48,7 @@ if st.button('Predict'):
 
 # Interaction pour améliorer la phrase
 if 'current_prediction' in st.session_state:
-    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key="improved")
+    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", value=st.session_state.improved, key="improved")
 
     if st.button('Submit the improved sentence', key="submit_improved"):
         new_prediction = st.session_state.model.predict([improved_sentence])[0]
@@ -52,7 +58,9 @@ if 'current_prediction' in st.session_state:
             st.success("Congratulations! The difficulty level of your sentence has increased.")
             # Button to start over
             if st.button('Enter a new sentence'):
-                st.session_state.clear()  # Clearing all session state to start fresh
+                # Clear the text inputs
+                st.session_state.sentence = ""
+                st.session_state.improved = ""
                 st.experimental_rerun()  # Restart the application
         else:
             st.error("The difficulty level has not increased. Try again!")
