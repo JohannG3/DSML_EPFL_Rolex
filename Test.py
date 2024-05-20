@@ -57,18 +57,12 @@ if st.button('Predict and Enhance'):
 import streamlit as st
 import requests
 
-# Titre de l'application
-st.title('Enhanced Language Processing App')
-
-# Description
-st.write("Enter a French sentence to get its translation in English, synonyms for each word, and their French translations.")
-
 # Fonction pour traduire du français vers l'anglais
 def translate_to_english(text):
     url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52',
+        'X-RapidAPI-Key': 'YOUR_API_KEY',
         'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
     data = {
@@ -77,26 +71,33 @@ def translate_to_english(text):
     }
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        return response.json().get('translated_text', '')
-    else:
-        return "Translation failed!"
+        response_data = response.json()
+        # Check if response is a list and extract data accordingly
+        if isinstance(response_data, list):
+            # Assuming the relevant data is in the first item of the list
+            return response_data[0].get('translated_text', 'No translation found')
+        elif isinstance(response_data, dict):
+            return response_data.get('translated_text', 'No translation found')
+    return "Translation failed!"
 
 # Fonction pour obtenir des synonymes en anglais
 def get_synonyms(word):
     url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
-    headers = {'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52'}
+    headers = {'X-RapidAPI-Key': 'YOUR_API_KEY'}
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        return response.json().get('synonyms', [])
-    else:
-        return []
+        response_data = response.json()
+        # Check if response is a dictionary and extract synonyms
+        if 'synonyms' in response_data:
+            return response_data['synonyms']
+    return []
 
 # Fonction pour traduire de l'anglais vers le français
 def translate_to_french(text):
     url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52',
+        'X-RapidAPI-Key': 'YOUR_API_KEY',
         'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
     data = {
@@ -105,39 +106,10 @@ def translate_to_french(text):
     }
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        return response.json().get('translated_text', '')
-    else:
-        return "Translation failed!"
-
-# Interaction utilisateur
-sentence = st.text_input("Enter a French sentence")
-
-if st.button('Process'):
-    # Traduction en anglais
-    english_translation = translate_to_english(sentence)
-    st.write(f"English translation: {english_translation}")
-    
-    # Extraction des mots et obtention des synonymes
-    words = english_translation.split()
-    all_synonyms = {}
-    for word in words:
-        synonyms = get_synonyms(word)
-        all_synonyms[word] = synonyms
-    
-    st.write("Synonyms in English:")
-    for word, synonyms in all_synonyms.items():
-        st.write(f"{word}: {', '.join(synonyms)}")
-    
-    # Traduction des synonymes en français
-    synonyms_in_french = {}
-    for word, synonyms in all_synonyms.items():
-        french_synonyms = []
-        for synonym in synonyms:
-            translated_synonym = translate_to_french(synonym)
-            french_synonyms.append(translated_synonym)
-        synonyms_in_french[word] = french_synonyms
-    
-    st.write("French translations of English synonyms:")
-    for word, synonyms in synonyms_in_french.items():
-        st.write(f"{word}: {', '.join(synonyms)}")
-
+        response_data = response.json()
+        # Check if response is a list and extract data accordingly
+        if isinstance(response_data, list):
+            return response_data[0].get('translated_text', 'No translation found')
+        elif isinstance(response_data, dict):
+            return response_data.get('translated_text', 'No translation found')
+    return "Translation failed!"
