@@ -102,10 +102,6 @@ def translate_text(text, target_language="fr"):
         st.error("HTTP error occurred with status code: " + str(response.status_code))
         return "Translation error"
 
-
-
-
-
 # Fonction pour obtenir des synonymes avec WordsAPI
 def get_synonyms(word):
     url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
@@ -123,6 +119,7 @@ def get_synonyms(word):
 sentence = st.text_input("Sentence in French", "")
 
 if st.button('Predict and Enhance'):    
+    """
     # Obtenir des synonymes en anglais
     english_words = sentence.split()
     synonyms = {word: get_synonyms(word) for word in english_words}
@@ -140,3 +137,6 @@ if st.button('Predict and Enhance'):
     # Effectuer la prédiction de difficulté en français
     prediction = st.session_state.model.predict([sentence])[0]
     st.write(f"The predicted difficulty level for this sentence in French is: {prediction}")
+    """
+    sentence_fr = translate_text(sentence, "fr")
+    st.write(f"The translated sentence in French is: {sentence_fr}")
