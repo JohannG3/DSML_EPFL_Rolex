@@ -114,8 +114,18 @@ def main():
                 if st.button('Start again with a new sentence'):
                     st.session_state.initiated = False
                     st.experimental_rerun()
-            else:
-                st.error("The difficulty level has not increased. Try again !")
+                    placeholder = st.empty()
+
+                    with placeholder.container():
+                        st.title("Try")
+                        btn = st.button("try")
+
+                    #If btn is pressed or True
+                    if btn:
+                    #This would empty everything inside the container
+                        placeholder.empty()
+                else:
+                    st.error("The difficulty level has not increased. Try again !")
 
 if __name__ == "__main__":
     main()
