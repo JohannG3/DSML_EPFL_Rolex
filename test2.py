@@ -9,7 +9,7 @@ def translate_text(text, target_language="en"):
     }
     headers = {
         "content-type": "application/json",
-        "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY",
+        "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
         "X-RapidAPI-Host": "opentranslator.p.rapidapi.com"
     }
 
