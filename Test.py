@@ -84,18 +84,20 @@ def translate_text(text, target_language="fr"):
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 200:
         response_data = response.json()
-        if response_data and response_data[0]['status'] == 'SUCCESS' and response_data[0]['result']:
-            # Assuming the first item in the result list is the translated text
-            translated_text = response_data[0]['result'][0][0]  # Access the first element of the result list
+        if (response_data and response_data[0].get('status') == 'SUCCESS' and 
+            response_data[0].get('result') and len(response_data[0]['result']) > 0 and 
+            len(response_data[0]['result'][0]) > 0):
+            translated_text = response_data[0]['result'][0][0]  # Safely access the first element of the result list
             return translated_text
         else:
-            # Handle the case where 'result' is empty or not as expected
+            # Handle the case where the expected data is not available
             st.error("Failed to get translation. Response from API: " + str(response_data))
             return "Translation error"
     else:
         # Handle HTTP errors
         st.error("HTTP error occurred with status code: " + str(response.status_code))
         return "Translation error"
+
 
 
 
