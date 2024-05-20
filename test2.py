@@ -1,13 +1,13 @@
 import streamlit as st
 import requests
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 
 # Charger les variables d'environnement
-load_dotenv()
+#load_dotenv()
 
 # Récupérer la clé API depuis les variables d'environnement
-API_KEY = os.getenv('RAPIDAPI_KEY')
+#API_KEY = os.getenv('RAPIDAPI_KEY')
 
 headers = {
     'content-type': 'application/json',
