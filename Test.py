@@ -15,7 +15,6 @@ if 'model' not in st.session_state:
     response = requests.get(url)
     st.session_state.model = load(BytesIO(response.content))
 
-# Fonction pour traduire du texte avec LibreTranslate
 def translate_text(input_text, source_lang, target_lang):
     url = "https://libretranslate.com/translate"
     payload = {
@@ -25,8 +24,19 @@ def translate_text(input_text, source_lang, target_lang):
         "format": "text"
     }
     headers = {"accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
-    response = requests.post(url, data=payload, headers=headers)
-    return response.json()['translatedText']
+    try:
+        response = requests.post(url, data=payload, headers=headers)
+        response_data = response.json()
+        if 'translatedText' in response_data:
+            return response_data['translatedText']
+        else:
+            # Gestion si la clé 'translatedText' n'est pas présente dans la réponse
+            st.error("Failed to translate. The API response was: " + str(response_data))
+            return None  # Ou vous pouvez retourner une chaîne vide ou un message d'erreur spécifique
+    except Exception as e:
+        st.error("Error during translation: " + str(e))
+        return None
+
 
 # Fonction pour obtenir des synonymes avec WordsAPI
 def get_synonyms(word):
