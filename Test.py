@@ -126,6 +126,7 @@ def main():
                     st.session_state.new_sentence = ''  # Effacer la nouvelle phrase
                     st.session_state.initiated = False
                     st.experimental_rerun()
+                    st.write(f"You can now restart from the beginning with a new sentence !")
             else:
                 st.error("The difficulty level has not increased. Try again !")
 
