@@ -55,74 +55,72 @@ if st.button('Predict and Enhance'):
 
 import streamlit as st
 import requests
-import json
 
 # Titre de l'application
-st.title('Advanced Word Translator and Synonym Finder')
+st.title('Enhanced Language Processing App')
 
 # Description
-st.write("Enter a French word to get its English synonyms translated back into French.")
+st.write("Enter a French sentence to get its synonyms in French via English translation.")
 
-# API Keys (Placeholders ici, remplacez avec vos propres clés)
-MYMEMORY_API_KEY = 'YOUR_MYMEMORY_API_KEY'
-WORDS_API_KEY = 'YOUR_WORDS_API_KEY'
-LIBRE_TRANSLATE_URL = 'https://libretranslate.com/translate'
-
-# Fonction pour traduire un mot du français vers l'anglais
-def translate_to_english(word):
-    params = {
-        "q": word,
-        "langpair": "fr|en",
-        "de": "jomboso3@gmail.com"  # Changez à votre email utilisé pour l'API
-    }
+# Fonction pour traduire du français vers l'anglais
+def translate_to_english(text):
+    url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
-        "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
-        "X-RapidAPI-Host": "translated-mymemory---translation-memory.p.rapidapi.com"
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52',
+        'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
-    response = requests.get("https://translated-mymemory---translation-memory.p.rapidapi.com/get", params=params, headers=headers)
-    return response.json()['responseData']['translatedText']
+    data = {
+        'text': text,
+        'target': 'en'
+    }
+    response = requests.post(url, json=data, headers=headers)
+    return response.json().get('translated_text', '')
 
 # Fonction pour obtenir des synonymes en anglais
 def get_synonyms(word):
-    url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
-    headers = {
-        "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
-        "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com"
-    }
+    url = f"https://wordsapi.com/mashape/words/{word}/synonyms"
+    headers = {'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52'}
     response = requests.get(url, headers=headers)
-    data = response.json()
-    return data['synonyms'] if 'synonyms' in data else []
+    return response.json().get('synonyms', [])
 
-# Fonction pour traduire des mots de l'anglais vers le français
-def translate_to_french(words):
-    data = {
-        "q": ", ".join(words),
-        "source": "en",
-        "target": "fr",
-        "format": "text"
+# Fonction pour traduire de l'anglais vers le français
+def translate_to_french(text):
+    url = 'https://opentranslator.p.rapidapi.com/translate'
+    headers = {
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52',
+        'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(LIBRE_TRANSLATE_URL, data=json.dumps(data), headers=headers)
-    return response.json()['translatedText']
+    data = {
+        'text': text,
+        'target': 'fr'
+    }
+    response = requests.post(url, json=data, headers=headers)
+    return response.json().get('translated_text', '')
 
-# Interaction avec l'utilisateur
-french_word = st.text_input("French Word", "")
+# Interaction utilisateur
+sentence = st.text_input("Enter a French sentence")
 
-if st.button('Translate and Find Synonyms'):
-    if french_word:
-        # Traduction du français vers l'anglais
-        english_word = translate_to_english(french_word)
-        st.write(f"English translation: {english_word}")
-        
-        # Obtention des synonymes en anglais
-        synonyms = get_synonyms(english_word)
-        st.write(f"English synonyms: {', '.join(synonyms)}")
-        
-        # Traduction des synonymes vers le français
+if st.button('Process'):
+    # Traduction en anglais
+    english_translation = translate_to_english(sentence)
+    
+    # Extraction des mots et obtention des synonymes
+    words = english_translation.split()
+    all_synonyms = {}
+    for word in words:
+        synonyms = get_synonyms(word)
         if synonyms:
-            french_synonyms = translate_to_french(synonyms)
-            st.write(f"French translations of synonyms: {french_synonyms}")
-        else:
-            st.write("No synonyms found.")
-
-
+            all_synonyms[word] = synonyms
+    
+    # Traduction des synonymes en français
+    synonyms_in_french = {}
+    for word, synonyms in all_synonyms.items():
+        french_synonyms = [translate_to_french(synonym) for synonym in synonyms]
+        synonyms_in_french[word] = french_synonyms
+    
+    # Affichage des résultats
+    st.write("Synonyms in French:")
+    for word, synonyms in synonyms_in_french.items():
+        st.write(f"{word}: {', '.join(synonyms)}")
