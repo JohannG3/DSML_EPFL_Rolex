@@ -15,23 +15,28 @@ if 'model' not in st.session_state:
     response = requests.get(url)
     st.session_state.model = load(BytesIO(response.content))
 
-# Fonction pour obtenir des synonymes
+# Fonction pour obtenir des synonymes à partir de Free Dictionary API
 def get_synonyms(word):
-    synonyms = {
-        "manger": ["consommer", "dévorer", "ingérer"],
-        "pomme": ["fruit"],
-        "perdu": ["égaré", "disparu", "paumé"]
-    }
-    return synonyms.get(word, [])
-
-# Gérer l'état des entrées
-if 'sentence' not in st.session_state:
-    st.session_state.sentence = ""
-if 'improved' not in st.session_state:
-    st.session_state.improved = ""
+    try:
+        api_url = f"https://api.dictionaryapi.dev/api/v2/entries/fr/{word}"
+        response = requests.get(api_url)
+        word_data = response.json()
+        synonyms_list = []
+        if 'title' in word_data:
+            # Gère le cas où aucun synonyme n'est trouvé
+            return "No synonyms found"
+        else:
+            # Parcourt les différentes significations pour extraire les synonymes
+            for meaning in word_data[0]['meanings']:
+                for definition in meaning['definitions']:
+                    if 'synonyms' in definition:
+                        synonyms_list.extend(definition['synonyms'])
+            return ', '.join(set(synonyms_list)) if synonyms_list else "No synonyms found"
+    except Exception as e:
+        return "No synonyms found"
 
 # Prédiction de la difficulté et gestion des améliorations de phrase
-sentence = st.text_input("Sentence", value=st.session_state.sentence, key="sentence")
+sentence = st.text_input("Sentence", "")
 
 if st.button('Predict'):
     prediction = st.session_state.model.predict([sentence])[0]
@@ -40,15 +45,17 @@ if st.button('Predict'):
     words = sentence.split()
     for word in words:
         synonyms = get_synonyms(word)
-        if synonyms:
-            st.write(f"Synonyms for '{word}': {', '.join(synonyms)}")
+        if synonyms and synonyms != "No synonyms found":
+            st.write(f"Synonyms for '{word}': {synonyms}")
+        else:
+            st.write(f"No synonyms found for '{word}'.")
 
     # Sauvegarder la prédiction initiale pour comparaison ultérieure
     st.session_state.current_prediction = prediction
 
 # Interaction pour améliorer la phrase
 if 'current_prediction' in st.session_state:
-    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", value=st.session_state.improved, key="improved")
+    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key="improved")
 
     if st.button('Submit the improved sentence', key="submit_improved"):
         new_prediction = st.session_state.model.predict([improved_sentence])[0]
@@ -56,11 +63,8 @@ if 'current_prediction' in st.session_state:
         
         if new_prediction > st.session_state.current_prediction:
             st.success("Congratulations! The difficulty level of your sentence has increased.")
-            # Button to start over
             if st.button('Enter a new sentence'):
-                # Clear the text inputs
-                st.session_state.sentence = ""
-                st.session_state.improved = ""
-                st.experimental_rerun()  # Restart the application
+                st.session_state.clear()
+                st.experimental_rerun()
         else:
             st.error("The difficulty level has not increased. Try again!")
