@@ -100,6 +100,6 @@ def translate_to_french(text):
 sentence = st.text_input("Enter a French sentence")
 if st.button('Translate'):
     english_translation = translate_to_english(sentence)
-    st.write(f"English translation: {english_translation}")
+    st.write(f"English translation: {RAPIDAPI_KEY}")
     french_translation = translate_to_french(english_translation)
     st.write(f"Re-translated to French: {french_translation}")
