@@ -62,7 +62,7 @@ def translate_to_english(text):
     url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': 'YOUR_API_KEY',
+        'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52',
         'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
     data = {
@@ -83,7 +83,7 @@ def translate_to_english(text):
 # Fonction pour obtenir des synonymes en anglais
 def get_synonyms(word):
     url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
-    headers = {'X-RapidAPI-Key': 'YOUR_API_KEY'}
+    headers = {'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52'}
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         response_data = response.json()
@@ -97,7 +97,7 @@ def translate_to_french(text):
     url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': 'YOUR_API_KEY',
+        'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52',
         'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
     data = {
