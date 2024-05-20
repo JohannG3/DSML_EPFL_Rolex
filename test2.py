@@ -17,7 +17,7 @@ def translate_text(text, source_lang, target_lang):
     payload = f"source_language={source_lang}&target_language={target_lang}&text={text}"
     headers = {
         "content-type": "application/x-www-form-urlencoded",
-        "X-RapidAPI-Key": "your-rapidapi-key",
+        "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
         "X-RapidAPI-Host": "text-translator2.p.rapidapi.com"
     }
     response = requests.post(translate_url, data=payload, headers=headers)
@@ -29,7 +29,7 @@ def get_synonyms(word):
     synonyms_url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
     headers = {
         'x-rapidapi-host': "wordsapiv1.p.rapidapi.com",
-        'x-rapidapi-key': "your-rapidapi-key"
+        'x-rapidapi-key': "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52"
     }
     response = requests.get(synonyms_url, headers=headers)
     if response.status_code == 200 and 'synonyms' in response.json():
