@@ -2,6 +2,14 @@ import streamlit as st
 import requests
 from joblib import load
 from io import BytesIO
+import nltk
+from nltk.corpus import stopwords
+
+# Téléchargez les stop words la première fois
+nltk.download('stopwords')
+
+# Chargement des stop words pour le français
+french_stopwords = set(stopwords.words('french'))
 
 st.title('Amélioration de la difficulté d\'une phrase en français')
 
@@ -26,6 +34,9 @@ def translate_text(text, source_lang, target_lang):
     return "Translation error"
 
 def get_synonyms(word):
+    # Vérifiez si le mot est un stop word
+    if word.lower() in french_stopwords:
+        return []  # Retourne une liste vide si c'est un stop word
     synonyms_url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
     headers = {
         'x-rapidapi-host': "wordsapiv1.p.rapidapi.com",
