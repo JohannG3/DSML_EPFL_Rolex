@@ -6,7 +6,7 @@ from io import BytesIO
 st.markdown("""
     <style>
     h1 {
-        color: pink;
+        color: blue;
         font-size: 48px;
     }
     h2 {
