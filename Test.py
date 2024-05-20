@@ -31,6 +31,12 @@ if 'model' not in st.session_state:
     response = requests.get(model_url)
     st.session_state.model = load(BytesIO(response.content))
 
+# Initialisation ou réinitialisation de l'état de la session
+if 'initiated' not in st.session_state:
+    st.session_state.initiated = False
+    st.session_state.sentence = ""
+    st.session_state.new_sentence = ""
+
 # Fonctions auxiliaires pour la traduction et la récupération des synonymes
 def translate_text(text, source_lang, target_lang):
     translate_url = "https://text-translator2.p.rapidapi.com/translate"
@@ -72,9 +78,10 @@ def main():
         st.session_state.initiated = False
 
     # Interface utilisateur
-    sentence = st.text_input("Enter a sentence in French", key='sentence_input')
+    sentence = st.text_input("Enter a sentence in French", key='sentence_input', value=st.session_state.sentence)
     if st.button('Analyze the sentence') or st.session_state.initiated:
         st.session_state.initiated = True
+        st.session_state.sentence = sentence
         # Prédiction de la difficulté
         difficulty = st.session_state.model.predict([sentence])[0]
         st.write(f"Predicted difficulty level for this sentence in French : {difficulty}")
@@ -105,15 +112,18 @@ def main():
             st.write(f"{word} : {', '.join(syns)}")
     
         # Demande de nouvelle phrase
-        new_sentence = st.text_input("Enter a new sentence to try to improve you french level and test your learning!", key='new_sentence')
+        new_sentence = st.text_input("Enter a new sentence to try to improve you french level and test your learning!", value=st.session_state.new_sentence)
         if st.button('Submit the improved sentence'):
+            st.session_state.new_sentence = new_sentence
             new_difficulty = st.session_state.model.predict([new_sentence])[0]
             st.write(f"The new predicted difficulty level for your improved sentence is: {new_difficulty}")
                 
             if new_difficulty > difficulty:
                 st.success("Congratulations ! The difficulty level of your sentence has increased.")
                 if st.button('Start again with a new sentence'):
-                    pyautogui.hotkey("ctrl","F5")
+                    for key in st.session_state.keys():
+                        del st.session_state[key]
+                    st.experimental_rerun()
                         #st.session_state.initiated = False
                         #st.experimental_rerun()
             else:
