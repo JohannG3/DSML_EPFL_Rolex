@@ -105,7 +105,7 @@ def remove_punctuation(text):
 # Fonction principale de l'application
 def main():
     st.image('https://raw.githubusercontent.com/JohannG3/DSML_EPFL_Rolex/main/logo_streamlit.webp', width=200)
-    st.title('Improve your level of French')
+    st.title('Improve your level of French with pigeon.com')
 
     if 'initiated' not in st.session_state:
         st.session_state.initiated = False
