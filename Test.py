@@ -60,7 +60,7 @@ import requests
 st.title('Enhanced Language Processing App')
 
 # Description
-st.write("Enter a French sentence to get its synonyms in French via English translation.")
+st.write("Enter a French sentence to get its translation in English, synonyms for each word, and their French translations.")
 
 # Fonction pour traduire du français vers l'anglais
 def translate_to_english(text):
@@ -75,14 +75,20 @@ def translate_to_english(text):
         'target': 'en'
     }
     response = requests.post(url, json=data, headers=headers)
-    return response.json().get('translated_text', '')
+    if response.status_code == 200:
+        return response.json().get('translated_text', '')
+    else:
+        return "Translation failed!"
 
 # Fonction pour obtenir des synonymes en anglais
 def get_synonyms(word):
-    url = f"https://wordsapi.com/mashape/words/{word}/synonyms"
+    url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
     headers = {'X-RapidAPI-Key': '864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52'}
     response = requests.get(url, headers=headers)
-    return response.json().get('synonyms', [])
+    if response.status_code == 200:
+        return response.json().get('synonyms', [])
+    else:
+        return []
 
 # Fonction pour traduire de l'anglais vers le français
 def translate_to_french(text):
@@ -97,7 +103,10 @@ def translate_to_french(text):
         'target': 'fr'
     }
     response = requests.post(url, json=data, headers=headers)
-    return response.json().get('translated_text', '')
+    if response.status_code == 200:
+        return response.json().get('translated_text', '')
+    else:
+        return "Translation failed!"
 
 # Interaction utilisateur
 sentence = st.text_input("Enter a French sentence")
@@ -105,22 +114,28 @@ sentence = st.text_input("Enter a French sentence")
 if st.button('Process'):
     # Traduction en anglais
     english_translation = translate_to_english(sentence)
+    st.write(f"English translation: {english_translation}")
     
     # Extraction des mots et obtention des synonymes
     words = english_translation.split()
     all_synonyms = {}
     for word in words:
         synonyms = get_synonyms(word)
-        if synonyms:
-            all_synonyms[word] = synonyms
+        all_synonyms[word] = synonyms
+    
+    st.write("Synonyms in English:")
+    for word, synonyms in all_synonyms.items():
+        st.write(f"{word}: {', '.join(synonyms)}")
     
     # Traduction des synonymes en français
     synonyms_in_french = {}
     for word, synonyms in all_synonyms.items():
-        french_synonyms = [translate_to_french(synonym) for synonym in synonyms]
+        french_synonyms = []
+        for synonym in synonyms:
+            translated_synonym = translate_to_french(synonym)
+            french_synonyms.append(translated_synonym)
         synonyms_in_french[word] = french_synonyms
     
-    # Affichage des résultats
-    st.write("Synonyms in French:")
+    st.write("French translations of English synonyms:")
     for word, synonyms in synonyms_in_french.items():
         st.write(f"{word}: {', '.join(synonyms)}")
