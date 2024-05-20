@@ -1,41 +1,31 @@
 import streamlit as st
 import requests
-#from dotenv import load_dotenv
-import os
 
-# Charger les variables d'environnement
-#load_dotenv()
-
-# Récupérer la clé API depuis les variables d'environnement
-#API_KEY = os.getenv('RAPIDAPI_KEY')
-
-headers = {
-    'content-type': 'application/json',
-    'X-RapidAPI-Key': "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
-    'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
-}
-
-url = 'https://opentranslator.p.rapidapi.com/translate'
-
-def translate_text(text, target_language):
+def translate_text(text, target_language="en"):
+    url = "https://opentranslator.p.rapidapi.com/translate"
     payload = {
         "text": text,
         "target": target_language
     }
+    headers = {
+        "content-type": "application/json",
+        "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY",
+        "X-RapidAPI-Host": "opentranslator.p.rapidapi.com"
+    }
+
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 200:
         return response.json()['translatedText']
     else:
-        return "Erreur lors de la traduction"
+        return "Erreur de traduction"
 
-# Interface Streamlit
-st.title('Traducteur Français-Anglais')
+def main():
+    st.title('Traducteur de Français vers Anglais')
+    user_input = st.text_area("Entrez une phrase en français que vous voulez traduire en anglais:")
 
-# Entrée de l'utilisateur
-user_input = st.text_area("Entrez une phrase en français:")
+    if st.button("Traduire"):
+        translation = translate_text(user_input)
+        st.text_area("Traduction en anglais:", translation, height=150)
 
-# Bouton pour traduire
-if st.button('Traduire'):
-    translation = translate_text(user_input, 'en')
-    st.write('Traduction en anglais :', translation)
-
+if __name__ == "__main__":
+    main()
