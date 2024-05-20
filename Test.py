@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from joblib import load
 from io import BytesIO
+import pyautogui
 
 st.markdown("""
     <style>
@@ -112,18 +113,9 @@ def main():
             if new_difficulty > difficulty:
                 st.success("Congratulations ! The difficulty level of your sentence has increased.")
                 if st.button('Start again with a new sentence'):
-                    placeholder = st.empty()
-
-                    with placeholder.container():
-                        st.title("Try")
-                        btn = st.button("try")
-
-                    #If btn is pressed or True
-                    if btn:
-                    #This would empty everything inside the container
-                        placeholder.empty()
-                        st.session_state.initiated = False
-                        st.experimental_rerun()
+                    pyautogui.hotkey("ctrl","F5")
+                        #st.session_state.initiated = False
+                        #st.experimental_rerun()
             else:
                 st.error("The difficulty level has not increased. Try again !")
 
