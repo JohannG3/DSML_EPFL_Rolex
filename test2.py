@@ -42,25 +42,27 @@ def get_synonyms(word):
     return []
 
 # Interface utilisateur
-sentence = st.text_input("Entrez une phrase en français")
-
-if st.button('Analyser la phrase'):
+sentence = st.text_input("Enter a sentence in French")
+if st.button('Analyze the sentence'):
     # Prédiction de la difficulté
     difficulty = st.session_state.model.predict([sentence])[0]
-    st.write(f"Niveau de difficulté prédit pour cette phrase en français : {difficulty}")
+    st.write(f"Predicted difficulty level for this sentence in French : {difficulty}")
     
     # Traduction de la phrase en anglais
     english_translation = translate_text(sentence, 'fr', 'en')
-    st.write(f"Traduction en anglais : {english_translation}")
+    st.write(f"The sentence you introduced means : {english_translation}")
+
+    st.write(f"Now, increase your vocabulary with some synonyms!")
     
     # Obtention et traduction des synonymes
-    words = english_translation.split()
+    mots = sentence.split()
+    words = [translate_text(mot, 'en', 'fr') for mot in mots]
     synonyms_list = {word: get_synonyms(word) for word in words}
     synonyms_translated = {word: [translate_text(syn, 'en', 'fr') for syn in synonyms_list[word]] for word in synonyms_list}
     
     # Affichage des synonymes
     for word, syns in synonyms_translated.items():
-        st.write(f"Synonymes de {word} : {', '.join(syns)}")
+        st.write(f"Synonymes de {mot} : {', '.join(syns)}")
     
     # Demande de nouvelle phrase
     new_sentence = st.text_input("Entrez une nouvelle phrase pour essayer d'améliorer le niveau de difficulté")
