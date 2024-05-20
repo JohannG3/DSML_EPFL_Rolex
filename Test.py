@@ -114,12 +114,9 @@ def get_synonyms(word):
 # Prédiction de la difficulté et gestion des traductions et synonymes
 sentence = st.text_input("Sentence in French", "")
 
-if st.button('Predict and Enhance'):
-    # Traduire de français à anglais
-    english_translation = translate_text(sentence, "en")
-    
+if st.button('Predict and Enhance'):    
     # Obtenir des synonymes en anglais
-    english_words = english_translation.split()
+    english_words = sentence.split()
     synonyms = {word: get_synonyms(word) for word in english_words}
     
     # Traduire les synonymes en français
