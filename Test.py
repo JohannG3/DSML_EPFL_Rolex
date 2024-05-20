@@ -3,6 +3,7 @@ import requests
 from joblib import load
 from io import BytesIO
 import pyautogui
+import os
 
 st.markdown("""
     <style>
