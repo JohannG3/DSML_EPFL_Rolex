@@ -4,10 +4,10 @@ from joblib import load
 from io import BytesIO
 
 # Titre de l'application
-st.title('Predicting sentence difficulty in French')
+st.title('Predicting sentence difficulty in French with Synonym Enhancement')
 
 # Description
-st.write("Enter a sentence in French to predict its difficulty level and get synonyms to enrich your vocabulary.")
+st.write("Enter a sentence in French to predict its difficulty level, translate to English, get synonyms in English, and translate them back to French.")
 
 # Chargement du modèle si pas déjà chargé
 if 'model' not in st.session_state:
@@ -15,56 +15,52 @@ if 'model' not in st.session_state:
     response = requests.get(url)
     st.session_state.model = load(BytesIO(response.content))
 
-# Fonction pour obtenir des synonymes à partir de Free Dictionary API
+# Fonction pour traduire du texte avec LibreTranslate
+def translate_text(input_text, source_lang, target_lang):
+    url = "https://libretranslate.com/translate"
+    payload = {
+        "q": input_text,
+        "source": source_lang,
+        "target": target_lang,
+        "format": "text"
+    }
+    headers = {"accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
+    response = requests.post(url, data=payload, headers=headers)
+    return response.json()['translatedText']
+
+# Fonction pour obtenir des synonymes avec WordsAPI
 def get_synonyms(word):
-    try:
-        api_url = f"https://api.dictionaryapi.dev/api/v2/entries/fr/{word}"
-        response = requests.get(api_url)
-        word_data = response.json()
-        synonyms_list = []
-        if 'title' in word_data:
-            # Gère le cas où aucun synonyme n'est trouvé
-            return "No synonyms found"
-        else:
-            # Parcourt les différentes significations pour extraire les synonymes
-            for meaning in word_data[0]['meanings']:
-                for definition in meaning['definitions']:
-                    if 'synonyms' in definition:
-                        synonyms_list.extend(definition['synonyms'])
-            return ', '.join(set(synonyms_list)) if synonyms_list else "No synonyms found"
-    except Exception as e:
-        return "No synonyms found"
+    url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
+    headers = {
+        'x-rapidapi-host': "wordsapiv1.p.rapidapi.com",
+        'x-rapidapi-key': "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52"  # Replace YOUR_RAPIDAPI_KEY with your actual key from RapidAPI
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        return data['synonyms'] if 'synonyms' in data else []
+    return []
 
-# Prédiction de la difficulté et gestion des améliorations de phrase
-sentence = st.text_input("Sentence", "")
+# Prédiction de la difficulté et gestion des traductions et synonymes
+sentence = st.text_input("Sentence in French", "")
 
-if st.button('Predict'):
-    prediction = st.session_state.model.predict([sentence])[0]
-    st.write(f"The predicted difficulty level for this sentence is: {prediction}")
+if st.button('Predict and Enhance'):
+    # Traduire de français à anglais
+    translated_to_english = translate_text(sentence, "fr", "en")
+    st.write(f"Translated to English: {translated_to_english}")
     
-    words = sentence.split()
-    for word in words:
-        synonyms = get_synonyms(word)
-        if synonyms and synonyms != "No synonyms found":
-            st.write(f"Synonyms for '{word}': {synonyms}")
-        else:
-            st.write(f"No synonyms found for '{word}'.")
+    # Obtenir des synonymes en anglais
+    english_words = translated_to_english.split()
+    synonyms = {word: get_synonyms(word) for word in english_words}
+    
+    # Traduire les synonymes de retour en français
+    synonyms_translated = {word: [translate_text(syn, "en", "fr") for syn in synonyms[word]] for word in synonyms}
+    
+    st.write("Synonyms translated back to French:")
+    for word, syns in synonyms_translated.items():
+        st.write(f"{word} (EN) -> {', '.join(syns)} (FR)")
 
-    # Sauvegarder la prédiction initiale pour comparaison ultérieure
-    st.session_state.current_prediction = prediction
+    # Effectuer la prédiction de difficulté en français
+    prediction = st.session_state.model.predict([sentence])[0]
+    st.write(f"The predicted difficulty level for this sentence in French is: {prediction}")
 
-# Interaction pour améliorer la phrase
-if 'current_prediction' in st.session_state:
-    improved_sentence = st.text_input("Improve your sentence to increase the difficulty level:", key="improved")
-
-    if st.button('Submit the improved sentence', key="submit_improved"):
-        new_prediction = st.session_state.model.predict([improved_sentence])[0]
-        st.write(f"The new predicted difficulty level for your improved sentence is: {new_prediction}")
-        
-        if new_prediction > st.session_state.current_prediction:
-            st.success("Congratulations! The difficulty level of your sentence has increased.")
-            if st.button('Enter a new sentence'):
-                st.session_state.clear()
-                st.experimental_rerun()
-        else:
-            st.error("The difficulty level has not increased. Try again!")
