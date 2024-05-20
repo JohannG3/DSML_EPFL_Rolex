@@ -56,50 +56,60 @@ if st.button('Predict and Enhance'):
 
 import streamlit as st
 import requests
-from dotenv import load_dotenv
-import os
 
-# Charger les variables d'environnement
-load_dotenv()
-
-# Récupérer la clé API depuis les variables d'environnement
-RAPIDAPI_KEY = os.getenv('RAPIDAPI_KEY')
-
-# Titre de l'application
-st.title('Enhanced Language Processing App')
-
-# Description
-st.write("Enter a French sentence to get its translation in English, synonyms for each word, and their French translations.")
-
+# Fonction pour traduire du français vers l'anglais
 def translate_to_english(text):
     url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': RAPIDAPI_KEY,
+        'X-RapidAPI-Key': 'YOUR_API_KEY',
         'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
-    data = {'text': text, 'target': 'en'}
+    data = {
+        'text': text,
+        'target': 'en'
+    }
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        return response.json().get('translated_text', 'No translation found')
+        response_data = response.json()
+        # Check if response is a list and extract data accordingly
+        if isinstance(response_data, list):
+            # Assuming the relevant data is in the first item of the list
+            return response_data[0].get('translated_text', 'No translation found')
+        elif isinstance(response_data, dict):
+            return response_data.get('translated_text', 'No translation found')
     return "Translation failed!"
 
+# Fonction pour obtenir des synonymes en anglais
+def get_synonyms(word):
+    url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
+    headers = {'X-RapidAPI-Key': 'YOUR_API_KEY'}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        response_data = response.json()
+        # Check if response is a dictionary and extract synonyms
+        if 'synonyms' in response_data:
+            return response_data['synonyms']
+    return []
+
+# Fonction pour traduire de l'anglais vers le français
 def translate_to_french(text):
     url = 'https://opentranslator.p.rapidapi.com/translate'
     headers = {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': RAPIDAPI_KEY,
+        'X-RapidAPI-Key': 'YOUR_API_KEY',
         'X-RapidAPI-Host': 'opentranslator.p.rapidapi.com'
     }
-    data = {'text': text, 'target': 'fr'}
+    data = {
+        'text': text,
+        'target': 'fr'
+    }
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        return response.json().get('translated_text', 'No translation found')
+        response_data = response.json()
+        # Check if response is a list and extract data accordingly
+        if isinstance(response_data, list):
+            return response_data[0].get('translated_text', 'No translation found')
+        elif isinstance(response_data, dict):
+            return response_data.get('translated_text', 'No translation found')
     return "Translation failed!"
-
-sentence = st.text_input("Enter a French sentence")
-if st.button('Translate'):
-    english_translation = translate_to_english(sentence)
-    st.write(f"English translation: {RAPIDAPI_KEY}")
-    french_translation = translate_to_french(english_translation)
-    st.write(f"Re-translated to French: {french_translation}")
