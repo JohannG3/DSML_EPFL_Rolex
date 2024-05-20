@@ -71,7 +71,7 @@ def process_sentence(sentence):
 
 # Fonction principale de l'application
 def main():
-    st.image('path/to/your/logo.png', width=200)
+    st.image('https://raw.githubusercontent.com/JohannG3/DSML_EPFL_Rolex/main/logo_streamlit.webp', width=200)
     st.title('Improved the difficulty of a sentence in French')
 
     if 'initiated' not in st.session_state:
