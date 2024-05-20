@@ -122,7 +122,8 @@ def main():
         # Traduction et traitement des mots
         process_sentence(sentence)
 
-        st.header(f"Now, increase your vocabulary with some synonyms!")
+        st.header(f"Now, increase your vocabulary with some synonyms !")
+        st.write(f"Wait a bit ...")
 
         # Processus de traduction, obtention des synonymes, et re-traduction
         no_punct = remove_punctuation(sentence)
