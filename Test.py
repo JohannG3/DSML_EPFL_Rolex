@@ -46,6 +46,9 @@ st.markdown("""
     header, .reportview-container .main footer {
         background-color: black;
     }
+    .stApp {
+    color: #add8e6;
+    }
     </style>
 """, unsafe_allow_html=True)
 
