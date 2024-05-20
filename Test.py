@@ -122,9 +122,10 @@ def main():
                 if st.button('Start again with a new sentence'):
                     for key in st.session_state.keys():
                         del st.session_state[key]
+                    st.session_state.input_sentence = ''  # Effacer la phrase initiale
+                    st.session_state.new_sentence = ''  # Effacer la nouvelle phrase
+                    st.session_state.initiated = False
                     st.experimental_rerun()
-                        #st.session_state.initiated = False
-                        #st.experimental_rerun()
             else:
                 st.error("The difficulty level has not increased. Try again !")
 
