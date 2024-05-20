@@ -99,7 +99,7 @@ if st.button('Analyze the sentence'):
         new_difficulty = st.session_state.model.predict([new_sentence])[0]
         if new_difficulty > difficulty:
             st.success("Congratulations ! The difficulty level of your sentence has increased.")
-            if st.button('Enter a new sentence'):
+            if st.button('Start again with a new sentence'):
                 st.session_state.reset = True
         else:
             st.error("The difficulty level has not increased. Try again !")
