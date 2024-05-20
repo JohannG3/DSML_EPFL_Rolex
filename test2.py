@@ -71,7 +71,7 @@ if st.button('Analyze the sentence'):
     english_translation = translate_text(sentence, 'fr', 'en')
     st.write(f"The sentence you introduced means : {english_translation}")
 
-    st.header(f"Now, increase your vocabulary with some synonyms!")
+    st.header(f"Now, increase your vocabulary with some synonyms ! Wait a bit...")
 
     # Processus de traduction, obtention des synonymes, et re-traduction
     words = sentence.split()
