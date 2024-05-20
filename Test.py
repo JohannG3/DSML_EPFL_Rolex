@@ -70,7 +70,7 @@ if 'model' not in st.session_state:
     response = requests.get(url)
     st.session_state.model = load(BytesIO(response.content))
 
-def translate_text(text, target_language="en"):
+def translate_text(text, target_language="fr"):
     url = "https://opentranslator.p.rapidapi.com/translate"
     payload = {
         "text": text,
