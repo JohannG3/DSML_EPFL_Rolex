@@ -81,39 +81,39 @@ def main():
         # Traduction et traitement des mots
         process_sentence(sentence)
 
-    st.header(f"Now, increase your vocabulary with some synonyms!")
+        st.header(f"Now, increase your vocabulary with some synonyms!")
 
-    # Processus de traduction, obtention des synonymes, et re-traduction
-    words = sentence.split()
-    synonyms_in_french = {}
-    for word in words:
-        # Traduire chaque mot en anglais
-        translated_word = translate_text(word, 'fr', 'en')
-        # Obtenir les synonymes en anglais
-        if translated_word != "Translation error":
-            synonyms = get_synonyms(translated_word)
-            # Retraduire les synonymes en français
-            translated_synonyms = [translate_text(syn, 'en', 'fr') for syn in synonyms]
-            synonyms_in_french[word] = translated_synonyms
-        else:
-            synonyms_in_french[word] = ["Erreur de traduction"]
+        # Processus de traduction, obtention des synonymes, et re-traduction
+        words = sentence.split()
+        synonyms_in_french = {}
+        for word in words:
+            # Traduire chaque mot en anglais
+            translated_word = translate_text(word, 'fr', 'en')
+            # Obtenir les synonymes en anglais
+            if translated_word != "Translation error":
+                synonyms = get_synonyms(translated_word)
+                # Retraduire les synonymes en français
+                translated_synonyms = [translate_text(syn, 'en', 'fr') for syn in synonyms]
+                synonyms_in_french[word] = translated_synonyms
+            else:
+                synonyms_in_french[word] = ["Erreur de traduction"]
     
-    # Afficher les synonymes traduits pour chaque mot
-    st.write("Synonyms for each word:")
-    for word, syns in synonyms_in_french.items():
-        st.write(f"{word} : {', '.join(syns)}")
+        # Afficher les synonymes traduits pour chaque mot
+        st.write("Synonyms for each word:")
+        for word, syns in synonyms_in_french.items():
+            st.write(f"{word} : {', '.join(syns)}")
     
-    # Demande de nouvelle phrase
-    new_sentence = st.text_input("Enter a new sentence to try to improve you french level and test your learning!", value=st.session_state.new_sentence)
-    if st.button('Submit the improved sentence', key="submit_new"):
-        new_difficulty = st.session_state.model.predict([new_sentence])[0]
-        if new_difficulty > st.session_state.difficulty:
-            st.success("Congratulations ! The difficulty level of your sentence has increased.")
-            if st.button('Start again with a new sentence', key="restart"):
-                st.session_state.clear()
-        else:
-            st.error("The difficulty level has not increased. Try again !")
-            st.session_state.new_sentence = new_sentence
+        # Demande de nouvelle phrase
+        new_sentence = st.text_input("Enter a new sentence to try to improve you french level and test your learning!", value=st.session_state.new_sentence)
+        if st.button('Submit the improved sentence', key="submit_new"):
+            new_difficulty = st.session_state.model.predict([new_sentence])[0]
+            if new_difficulty > st.session_state.difficulty:
+                st.success("Congratulations ! The difficulty level of your sentence has increased.")
+                if st.button('Start again with a new sentence', key="restart"):
+                    st.session_state.clear()
+            else:
+                st.error("The difficulty level has not increased. Try again !")
+                st.session_state.new_sentence = new_sentence
 
 if __name__ == "__main__":
     main()
