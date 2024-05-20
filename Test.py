@@ -8,11 +8,11 @@ import string
 st.markdown("""
     <style>
     h1 {
-        color: blue;
+        color: #add8e6;
         font-size: 48px;
     }
     h2 {
-        color: blue;
+        color: #add8e6;
         font-size: 36px;
     }
     .reportview-container .markdown-text-container {
@@ -45,9 +45,6 @@ st.markdown("""
     }
     header, .reportview-container .main footer {
         background-color: black;
-    }
-    .stApp {
-    color: #add8e6;
     }
     </style>
 """, unsafe_allow_html=True)
