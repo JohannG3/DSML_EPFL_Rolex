@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 from joblib import load
 from io import BytesIO
-import pyautogui
 
 st.markdown("""
     <style>
