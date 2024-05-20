@@ -53,7 +53,7 @@ if st.button('Analyze the sentence'):
     st.write(f"The sentence you introduced means : {english_translation}")
 
     st.write(f"Now, increase your vocabulary with some synonyms!")
-    
+    """
     # Obtention et traduction des synonymes
     mots = sentence.split()
     words = [translate_text(mot, 'en', 'fr') for mot in mots]
@@ -63,6 +63,27 @@ if st.button('Analyze the sentence'):
     # Affichage des synonymes
     for word, syns in synonyms_translated.items():
         st.write(f"Synonymes de {mot} : {', '.join(syns)}")
+    """
+
+    # Processus de traduction, obtention des synonymes, et re-traduction
+    words = sentence.split()
+    synonyms_in_french = {}
+    for word in words:
+        # Traduire chaque mot en anglais
+        translated_word = translate_text(word, 'fr', 'en')
+        # Obtenir les synonymes en anglais
+        if translated_word != "Translation error":
+            synonyms = get_synonyms(translated_word)
+            # Retraduire les synonymes en français
+            translated_synonyms = [translate_text(syn, 'en', 'fr') for syn in synonyms]
+            synonyms_in_french[word] = translated_synonyms
+        else:
+            synonyms_in_french[word] = ["Erreur de traduction"]
+    
+    # Afficher les synonymes traduits pour chaque mot
+    st.write("Synonymes traduits en français pour chaque mot:")
+    for word, syns in synonyms_in_french.items():
+        st.write(f"{word} : {', '.join(syns)}")
     
     # Demande de nouvelle phrase
     new_sentence = st.text_input("Entrez une nouvelle phrase pour essayer d'améliorer le niveau de difficulté")
