@@ -84,7 +84,7 @@ def translate_text(text, target_language="fr"):
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 200:
         response_data = response.json()
-        # Check if the response structure is as expected
+        # Check deeply nested structure with safe guards
         if (response_data and isinstance(response_data, list) and
             response_data[0].get('status') == 'SUCCESS' and
             response_data[0].get('result') and
@@ -92,10 +92,11 @@ def translate_text(text, target_language="fr"):
             len(response_data[0]['result']) > 0 and
             isinstance(response_data[0]['result'][0], list) and
             len(response_data[0]['result'][0]) > 0):
+            # Correctly access the 'text' field inside the nested list
             translated_text = response_data[0]['result'][0][0]
             return translated_text
         else:
-            st.error("Failed to get a valid translation. Response structure is unexpected: " + str(response_data))
+            st.error("Failed to get a valid translation. Check API response structure: " + str(response_data))
             return "Translation error"
     else:
         st.error("HTTP error occurred with status code: " + str(response.status_code))
