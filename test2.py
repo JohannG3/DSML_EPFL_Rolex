@@ -30,7 +30,7 @@ def translate_text(text, source_lang, target_lang):
 def get_synonyms(word):
     # Vérifiez si le mot est un stop word
     if word.lower() in english_stopwords:
-        return []  # Retourne une liste vide si c'est un stop word
+        return ['No synonym']  # Retourne une liste vide si c'est un stop word
     synonyms_url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/synonyms"
     headers = {
         'x-rapidapi-host': "wordsapiv1.p.rapidapi.com",
