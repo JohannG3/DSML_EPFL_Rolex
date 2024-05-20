@@ -113,3 +113,35 @@ def translate_to_french(text):
         elif isinstance(response_data, dict):
             return response_data.get('translated_text', 'No translation found')
     return "Translation failed!"
+
+# Interaction utilisateur
+sentence = st.text_input("Enter a French sentence")
+
+if st.button('Process'):
+    # Traduction en anglais
+    english_translation = translate_to_english(sentence)
+    st.write(f"English translation: {english_translation}")
+    
+    # Extraction des mots et obtention des synonymes
+    words = english_translation.split()
+    all_synonyms = {}
+    for word in words:
+        synonyms = get_synonyms(word)
+        all_synonyms[word] = synonyms
+    
+    st.write("Synonyms in English:")
+    for word, synonyms in all_synonyms.items():
+        st.write(f"{word}: {', '.join(synonyms)}")
+    
+    # Traduction des synonymes en français
+    synonyms_in_french = {}
+    for word, synonyms in all_synonyms.items():
+        french_synonyms = []
+        for synonym in synonyms:
+            translated_synonym = translate_to_french(synonym)
+            french_synonyms.append(translated_synonym)
+        synonyms_in_french[word] = french_synonyms
+    
+    st.write("French translations of English synonyms:")
+    for word, synonyms in synonyms_in_french.items():
+        st.write(f"{word}: {', '.join(synonyms)}")
