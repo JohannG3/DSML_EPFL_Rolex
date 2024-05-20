@@ -83,9 +83,20 @@ def translate_text(text, target_language="en"):
     }
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 200:
-        return response.json()['translatedText']
+        response_data = response.json()
+        # Check if 'translatedText' is in the response data
+        if 'translatedText' in response_data:
+            return response_data['translatedText']
+        else:
+            # Handle the case where 'translatedText' is not available
+            # Log the response data or return a generic error message
+            st.error("Failed to get translation. Response from API: " + str(response_data))
+            return "Translation error"
     else:
+        # Handle HTTP errors
+        st.error("HTTP error occurred with status code: " + str(response.status_code))
         return "Translation error"
+
 
 # Fonction pour obtenir des synonymes avec WordsAPI
 def get_synonyms(word):
