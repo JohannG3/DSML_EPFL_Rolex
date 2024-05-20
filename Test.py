@@ -70,30 +70,25 @@ if 'model' not in st.session_state:
   response = requests.get(url)
   st.session_state.model = load(BytesIO(response.content))
 
-def translate_text(text, target_language="fr"):
-  url = "https://opentranslator.p.rapidapi.com/translate"
-  payload = {
-    "text": text,
-    "target": target_language
-  }
-  headers = {
-    "content-type": "application/json",
-    "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
-    "X-RapidAPI-Host": "opentranslator.p.rapidapi.com"
-  }
-  response = requests.post(url, json=payload, headers=headers)
-  if response.status_code == 200:
-    response_data = response.json()
-    # Directly access 'text' field within 'result'
-    translated_text = response_data['result'].get('text')
-    if translated_text:
-      return translated_text
+def translate_text(text, source_language, target_language):
+    url = "https://text-translator2.p.rapidapi.com/translate"
+    payload = {
+        "source_language": source_language,
+        "target_language": target_language,
+        "text": text
+    }
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "X-RapidAPI-Key": "864ad2ff57mshd1f224c4268230bp11ee28jsn58d9f3f8ad52",
+        "X-RapidAPI-Host": "text-translator2.p.rapidapi.com"
+    }
+    response = requests.post(url, data=payload, headers=headers)
+    if response.status_code == 200:
+        result = response.json().get('data', {}).get('translatedText', '')
+        return result
     else:
-      st.error("Failed to retrieve translated text.")
-      return "Translation error"
-  else:
-    st.error("HTTP error occurred with status code: " + str(response.status_code))
-    return "Translation error"
+        st.error(f"Failed to translate. Status code: {response.status_code}")
+        return None
 
 # Fonction pour obtenir des synonymes avec WordsAPI
 def get_synonyms(word):
@@ -132,6 +127,6 @@ if st.button('Predict and Enhance'):
   prediction = st.session_state.model.predict([sentence_fr])[0]
   st.write(f"The predicted difficulty level for this sentence in French is: {prediction}")
   """
-  sentence_fr = translate_text(sentence, "fr")
+  sentence_fr = translate_text(sentence, "en", "fr")
   st.write(f"The translated sentence in French is: {sentence_fr}")
 
