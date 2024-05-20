@@ -15,27 +15,6 @@ if 'model' not in st.session_state:
     response = requests.get(url)
     st.session_state.model = load(BytesIO(response.content))
 
-def translate_text(input_text, source_lang, target_lang):
-    url = "https://libretranslate.com/translate"
-    payload = {
-        "q": input_text,
-        "source": source_lang,
-        "target": target_lang,
-        "format": "text"
-    }
-    headers = {"accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
-    try:
-        response = requests.post(url, data=payload, headers=headers)
-        response_data = response.json()
-        if 'translatedText' in response_data:
-            return response_data['translatedText']
-        else:
-            # Gestion si la clé 'translatedText' n'est pas présente dans la réponse
-            st.error("Failed to translate. The API response was: " + str(response_data))
-            return None  # Ou vous pouvez retourner une chaîne vide ou un message d'erreur spécifique
-    except Exception as e:
-        st.error("Error during translation: " + str(e))
-        return None
 
 
 # Fonction pour obtenir des synonymes avec WordsAPI
@@ -56,18 +35,16 @@ sentence = st.text_input("Sentence in French", "")
 
 if st.button('Predict and Enhance'):
     # Traduire de français à anglais
-    translated_to_english = translate_text(sentence, "fr", "en")
-    st.write(f"Translated to English: {translated_to_english}")
+    
     
     # Obtenir des synonymes en anglais
-    english_words = translated_to_english.split()
+    english_words = sentence.split()
     synonyms = {word: get_synonyms(word) for word in english_words}
     
-    # Traduire les synonymes de retour en français
-    synonyms_translated = {word: [translate_text(syn, "en", "fr") for syn in synonyms[word]] for word in synonyms}
+
     
     st.write("Synonyms translated back to French:")
-    for word, syns in synonyms_translated.items():
+    for word, syns in synonyms.items():
         st.write(f"{word} (EN) -> {', '.join(syns)} (FR)")
 
     # Effectuer la prédiction de difficulté en français
