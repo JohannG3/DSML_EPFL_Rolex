@@ -106,6 +106,7 @@ def remove_punctuation(text):
 def main():
     st.image('https://raw.githubusercontent.com/JohannG3/DSML_EPFL_Rolex/main/logo_streamlit.webp', width=200)
     st.title('Improve your level of French with pigeon.com')
+    st.write('If it is written "Translation impossible", it means that the key of the API Text Translator need to be changed')
 
     if 'initiated' not in st.session_state:
         st.session_state.initiated = False
