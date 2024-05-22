@@ -104,9 +104,8 @@ def remove_punctuation(text):
 
 # Fonction principale de l'application
 def main():
-    st.image('https://raw.githubusercontent.com/JohannG3/DSML_EPFL_Rolex/main/logo_streamlit.webp', width=200)
+    st.image('https://raw.githubusercontent.com/JohannG3/DSML_EPFL_Rolex/main/logo_pigeon_streamlit.webp', width=300)
     st.title('Improve your level of French with pigeon.com')
-    st.write('If it is written "Translation impossible", it means that the key of the API Text Translator need to be changed')
 
     if 'initiated' not in st.session_state:
         st.session_state.initiated = False
@@ -141,7 +140,21 @@ def main():
                 synonyms_in_french[word] = translated_synonyms
             else:
                 synonyms_in_french[word] = ["Erreur de traduction"]
-    
+                st.write('If it is written "Erreur de traduction", it means that the key of the API Text Translator need to be changed')
+                new_key = st.text_input("Enter your key for Text Translator API", value=st.session_state.new_sentence)
+                def translate_text(text, source_lang, target_lang):
+                    translate_url = "https://text-translator2.p.rapidapi.com/translate"
+                    payload = f"source_language={source_lang}&target_language={target_lang}&text={text}"
+                    headers = {
+                            "content-type": "application/x-www-form-urlencoded",
+                            "X-RapidAPI-Key": new_key,
+                            "X-RapidAPI-Host": "text-translator2.p.rapidapi.com"
+                    }
+                    response = requests.post(translate_url, data=payload, headers=headers)
+                    if response.status_code == 200 and 'data' in response.json():
+                        return response.json()['data']['translatedText']
+                    return "Translation error"
+                        
         # Afficher les synonymes traduits pour chaque mot
         st.write("Synonyms for each word:")
         for word, syns in synonyms_in_french.items():
